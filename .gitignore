@@ -1,5 +1,2 @@
-.pio/
 .vscode/
-Credentials.h
-cert.h
-key.h
+env/
